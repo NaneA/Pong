@@ -1,0 +1,109 @@
+<html>
+<canvas id="tic" width="1200" height="600"></canvas>
+<script >
+const canvas = document.getElementById('tic');
+const tic = canvas.getContext('2d');
+
+const back = new Image();
+back.src = "https://www.packtpub.com/sites/default/files/Article-Images/2038_02_20.png"
+
+const drawBall = function(radius, x, y) { // drawing ball
+  tic.fillStyle = "red";
+  tic.beginPath();
+  tic.arc(x, y, radius, 0,2*Math.PI);
+  tic.fill();
+};
+const ball={ //coordinates for ball
+  rad:10,
+  x:90,
+  y:50,
+  xball:5,
+  yball:5,
+
+};
+const left={  //coordinates for left Rectangle
+    x:0,
+    y:0,
+    width:10,
+    height:100,
+    deltay:10,
+};
+const right={ //coordinates for right Rectangle
+  x:canvas.width-10,
+  y:0,
+  width:10,
+  height:100,
+  deltay:10,
+};
+const score = { //counting scores
+  left:0,
+  right:0,
+};
+document.addEventListener("keydown", function(e) { //keys up, down and w s
+  if(e.keyCode === 40 && right.y + right.height < canvas.height) {
+    right.y += right.deltay;
+  } else if(e.keyCode === 38 && right.y >= 0) {
+    right.y -= right.deltay;
+  }
+  if(e.keyCode === 87 && left.y + left.height < canvas.height) {
+    left.y -= left.deltay;
+  } else if(e.keyCode === 83 && right.y >= 0) {
+    left.y += left.deltay;
+  }
+
+})
+
+const draw=function(){ //drawing Rectangle, ball and filling the text
+  tic.clearRect(0,0, canvas.width, canvas.height);
+  tic.drawImage(back, 0, 0, canvas.width, canvas.height)
+  tic.fillStyle="#FF0000"
+  tic.fillRect(right.x,right.y,right.width,right.height);
+  tic.fillStyle="blue";
+  tic.fillRect(left.x,left.y,left.width, left.height);
+  drawBall(ball.rad,ball.x,ball.y);
+  tic.font="36px Times New Roman"
+  tic.fillStyle="blue";
+  tic.fillText(score.left,(canvas.width/2)-100,50);
+	tic.fillStyle="red";
+	tic.fillText(score.right,(canvas.width/2)+100,50);
+	tic.fillStyle="blue";
+}
+const update=function(){
+
+ ball.x+=ball.xball;
+ ball.y+=ball.yball;
+
+if(ball.y+ball.rad>=600 || ball.y+ball.rad<=0){
+  ball.yball=-ball.yball;
+}
+
+if(ball.x+ball.rad>=right.x && ball.x+ball.rad<canvas.width && right.y+right.height>=ball.y-ball.rad  && right.y<= ball.y+ball.rad ){
+  ball.xball=-ball.xball;
+}
+else if(ball.x+ball.rad<0){
+score.right++;
+  ball.x = right.x-ball.rad;
+  ball.y = right.y+(right.height/2);
+}
+if(ball.x-ball.rad<=left.x && ball.x+ball.rad>0 && left.y<=ball.y+ball.rad && left.y+left.height>= ball.y-ball.rad){
+   ball.xball=-ball.xball;
+}
+
+else if(ball.x+ball.rad>canvas.width){
+   score.left++;
+  ball.x = left.x+ball.rad
+  ball.y = left.y+(left.height/2);
+}
+}
+
+
+const loop=function(){
+  //drawBall();
+  draw();
+  update();
+  requestAnimationFrame(loop);
+}
+
+loop();
+  </script>
+  </html>
